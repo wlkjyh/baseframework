@@ -43,12 +43,12 @@ class AuthController extends Controller
         }
     }
 
-    public function logout(Request $r)
+    public function logout()
     {
         try {
             Auth::logout();
             return redirect()->route('auth.login');
-        } catch (\Throwable $e) {
+        } catch (\Throwable) {
             return pageErrorInfo;
         }
 

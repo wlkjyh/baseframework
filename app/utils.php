@@ -3,35 +3,60 @@
 namespace App;
 
 use Identicon;
+use Illuminate\Http\Request;
 
 class utils
 {
+
+    public static function arrayToObj(array $array): object
+    {
+        return json_decode(json_encode($array));
+    }
+
+    /***
+     * 获取搜索
+     * @param Request $request
+     * @param array $field
+     * @param string $ignore_data
+     * @return array
+     */
+    public static function getWhereLike(Request $request, array $field = [], string $ignore_data = 'ALL'): array
+    {
+
+        $where = [];
+        foreach ($field as $k => $v) {
+            if ($request->has($k) && $request->input($k) != $ignore_data) {
+                $where[] = [$v, 'like', '%' . $request->input($k) . '%'];
+            }
+        }
+        return $where;
+
+    }
 
     /***
      * 生成UUID
      * @return string
      */
-    public static function generate_uuid4()
+    public static function generate_uuid4(): string
     {
 
         $chars = md5(uniqid(mt_rand(), true));
-        $uuid = substr($chars, 0, 8) . '-'
+        return substr($chars, 0, 8) . '-'
             . substr($chars, 8, 4) . '-'
             . substr($chars, 12, 4) . '-'
             . substr($chars, 16, 4) . '-'
             . substr($chars, 20, 12);
-        return $uuid;
 
     }
 
     /***
      * 生成随机字符串
-     * @param $length
-     * @param $lower
-     * @param $upper
+     * @param int $length
+     * @param bool $lower
+     * @param bool $upper
      * @return string
      */
-    public static function generate_random($length = 6, $lower = false, $upper = false)
+    public static function generate_random(int $length = 6, bool $lower = false, bool $upper = false): string
     {
         $chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
         $random = '';
@@ -53,7 +78,7 @@ class utils
      * 生成头像
      * @return Identicon\Identicon
      */
-    public static function Identicon()
+    public static function Identicon(): Identicon\Identicon
     {
         return (new Identicon\Identicon());
     }
@@ -64,7 +89,7 @@ class utils
      * @param $end_time
      * @return string
      */
-    public static function created_at($end_time)
+    public static function created_at($end_time): string
     {
         $begin_time = date('Y-m-d H:i:s');
         if ($begin_time < $end_time) {
